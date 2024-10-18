@@ -1,4 +1,10 @@
 # ONCache
+ONCache (**O**verlay **N**etwork **Cache**) is a container overlay network featuring a cache-based and low-overhead fast path. 
+With ONCache, containers attain network performance akin to that of bare metal while maintaining network flexibility and compatibility. 
+ONCache can be seamlessly integrated into existing standard overlay networks and has been tested with [Antrea](https://github.com/antrea-io/antrea) and [Flannel](https://github.com/flannel-io/flannel).
+
+Our [NSDI'25 paper](https://shengkai16.github.io/assets/pdf/ONCache-nsdi25.pdf) describes the technical details of ONCache.
+
 ## In this repo
 This repo includes all the code and scripts that are required to run ONCache.
 
@@ -19,7 +25,7 @@ Before the start of the tutorial, you should prepare two hosts (e.g. VM or cloud
 ### Step0: Clone this repo on all the hosts
 The repo includes libbpf and yaml-cpp as submodules, and should be cloned at the same time.
 ```
-git clone --recurse-submodules https://github.com/nothepeople/ONCache.git ~/ONCache
+git clone --recurse-submodules https://github.com/shengkai16/ONCache.git ~/ONCache
 ```
 
 ### Step1: Provision a container cluster

@@ -273,6 +273,13 @@ int tc_init_in_func(struct __sk_buff *ctx) {
     if (eth->h_proto != bpf_htons(ETH_P_IP)) goto out;
     struct iphdr *iphdr = (struct iphdr *)(eth + 1);
 
+    unsigned int src_ip = iphdr->saddr;
+    src_ip = ntohl(src_ip);
+    unsigned int last_octet = src_ip & 0xFF;
+    if (last_octet == 1 || last_octet == 0) {
+        goto out;
+    }
+
     // We only learn the flow that is marked as 0x4
     if ((iphdr->tos & 0xc) != 0xc) goto out;
     ///////////////////////// Header/ifidx Learning ////////////////////

@@ -26,6 +26,9 @@ int parse_5tuple_in(struct iphdr * iph, void *data_end, struct fivetuple* tuple)
     tuple->protocol = iph->protocol;
     if (proto == IPPROTO_TCP) {
         struct tcphdr *tcphdr = (struct tcphdr *)(iph + 1);
+	if (tcphdr->fin) {
+	    return 1;
+	}
         tuple->rport = tcphdr->source;
         tuple->lport = tcphdr->dest;
     } else if (proto == IPPROTO_UDP) {
@@ -50,6 +53,9 @@ int parse_5tuple_e(struct iphdr * iph, void *data_end, struct fivetuple* tuple) 
     tuple->protocol = iph->protocol;
     if (proto == IPPROTO_TCP) {
         struct tcphdr *tcphdr = (struct tcphdr *)(iph + 1);
+	if (tcphdr->fin) {
+	    return 1;
+	}
         tuple->lport = tcphdr->source;
         tuple->rport = tcphdr->dest;
     } else if (proto == IPPROTO_UDP) {

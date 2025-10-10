@@ -47,7 +47,7 @@ struct bpf_elf_map SEC("maps") devmap = {
 
 SEC("tc_init_e")
 int tc_init_e_func(struct __sk_buff *skb) {
-    int err;
+    // int err;
     void *data = (void *)(long)skb->data;
     void *data_end = (void *)(long)skb->data_end;
     ////////////////// Check if the packet is a VXLAN packet ////////////////////
@@ -95,12 +95,14 @@ int tc_init_e_func(struct __sk_buff *skb) {
     // Make sure there is elem in the map
     struct egressinfo tmpnodeegressinfo_;
     initegressinfo(&tmpnodeegressinfo_, data, skb->ifindex);
-    err = bpf_map_update_elem(&egress_cache, &outer_iph->daddr, &tmpnodeegressinfo_, BPF_NOEXIST);
+    // err = 
+    bpf_map_update_elem(&egress_cache, &outer_iph->daddr, &tmpnodeegressinfo_, BPF_NOEXIST);
     // if(!err) {
         // bpf_printkm("(tc_init_e)INFO: Updated an nodeegressinfo element");
     // }
 
-    err = bpf_map_update_elem(&egressip_cache, &inner_iph->daddr, &outer_iph->daddr, BPF_NOEXIST);
+    // err = 
+    bpf_map_update_elem(&egressip_cache, &inner_iph->daddr, &outer_iph->daddr, BPF_NOEXIST);
     // if(!err) {
         // bpf_printkm("(tc_init_e)INFO: Added an podip element. RemoteIP is %x", inner_iph->daddr);
     // }

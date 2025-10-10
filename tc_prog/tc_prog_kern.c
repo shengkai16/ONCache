@@ -5,49 +5,49 @@
 #define PORT_MAX 65535
 #define ENABLENP
 
-struct bpf_elf_map SEC("maps") ingress_cache = {
-    .type = BPF_MAP_TYPE_LRU_HASH,
-    .size_key = sizeof(__be32),
-    .size_value = sizeof(struct ingressinfo),
-    .pinning    = PIN_GLOBAL_NS,
-    .max_elem = 1024,
-};
+struct {
+    __uint(type, BPF_MAP_TYPE_LRU_HASH);
+    __uint(max_entries, 1024);
+    __type(key, __be32);
+    __type(value, struct ingressinfo);
+    __uint(pinning, LIBBPF_PIN_BY_NAME);
+} ingress_cache SEC(".maps");
 
-struct bpf_elf_map SEC("maps") egressip_cache = {
-    .type = BPF_MAP_TYPE_LRU_HASH,
-    .size_key = sizeof(__be32),
-    .size_value = sizeof(__be32),
-    .pinning    = PIN_GLOBAL_NS,
-    .max_elem = 4096
-};
+struct {
+    __uint(type, BPF_MAP_TYPE_LRU_HASH);
+    __uint(max_entries, 4096);
+    __type(key, __be32);
+    __type(value, __be32);
+    __uint(pinning, LIBBPF_PIN_BY_NAME);
+} egressip_cache SEC(".maps");
 
-struct bpf_elf_map SEC("maps") egress_cache = {
-    .type = BPF_MAP_TYPE_LRU_HASH,
-    .size_key = sizeof(__be32),
-    .size_value = sizeof(struct egressinfo),
-    .pinning    = PIN_GLOBAL_NS,
-    .max_elem = 1024,
-};
+struct {
+    __uint(type, BPF_MAP_TYPE_LRU_HASH);
+    __uint(max_entries, 1024);
+    __type(key, __be32);
+    __type(value, struct egressinfo);
+    __uint(pinning, LIBBPF_PIN_BY_NAME);
+} egress_cache SEC(".maps");
 
-struct bpf_elf_map SEC("maps") policy_cache = {
-    .type = BPF_MAP_TYPE_LRU_HASH,
-    .size_key = sizeof(struct fivetuple),
-    .size_value = sizeof(struct action),
-    .pinning    = PIN_GLOBAL_NS,
-    .max_elem = 4096,
-};
+struct {
+    __uint(type, BPF_MAP_TYPE_LRU_HASH);
+    __uint(max_entries, 4096);
+    __type(key, struct fivetuple);
+    __type(value, struct action);
+    __uint(pinning, LIBBPF_PIN_BY_NAME);
+} policy_cache SEC(".maps");
 
-struct bpf_elf_map SEC("maps") devmap = {
-    .type = BPF_MAP_TYPE_LRU_HASH,
-    .size_key = sizeof(int),
-    .size_value = sizeof(struct devinfo),
-    .pinning    = PIN_GLOBAL_NS,
-    .max_elem = 8,
-};
+struct {
+    __uint(type, BPF_MAP_TYPE_LRU_HASH);
+    __uint(max_entries, 8);
+    __type(key, int);
+    __type(value, struct devinfo);
+    __uint(pinning, LIBBPF_PIN_BY_NAME);
+} devmap SEC(".maps");
 
 SEC("tc_init_e")
 int tc_init_e_func(struct __sk_buff *skb) {
-    int err;
+    // int err;
     void *data = (void *)(long)skb->data;
     void *data_end = (void *)(long)skb->data_end;
     ////////////////// Check if the packet is a VXLAN packet ////////////////////
@@ -95,12 +95,14 @@ int tc_init_e_func(struct __sk_buff *skb) {
     // Make sure there is elem in the map
     struct egressinfo tmpnodeegressinfo_;
     initegressinfo(&tmpnodeegressinfo_, data, skb->ifindex);
-    err = bpf_map_update_elem(&egress_cache, &outer_iph->daddr, &tmpnodeegressinfo_, BPF_NOEXIST);
+    // err = 
+    bpf_map_update_elem(&egress_cache, &outer_iph->daddr, &tmpnodeegressinfo_, BPF_NOEXIST);
     // if(!err) {
         // bpf_printkm("(tc_init_e)INFO: Updated an nodeegressinfo element");
     // }
 
-    err = bpf_map_update_elem(&egressip_cache, &inner_iph->daddr, &outer_iph->daddr, BPF_NOEXIST);
+    // err = 
+    bpf_map_update_elem(&egressip_cache, &inner_iph->daddr, &outer_iph->daddr, BPF_NOEXIST);
     // if(!err) {
         // bpf_printkm("(tc_init_e)INFO: Added an podip element. RemoteIP is %x", inner_iph->daddr);
     // }
